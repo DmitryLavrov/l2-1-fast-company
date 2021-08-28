@@ -4,11 +4,11 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 
-import Users from './components/users'
+import App from "./app"
 
 ReactDOM.render(
   <React.StrictMode>
-    <Users/>
+    <App/>
   </React.StrictMode>,
   document.getElementById('root')
 )
