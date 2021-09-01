@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SearchStatus = ({quantity}) => {
+const SearchStatus = ({numberOfUsers}) => {
   const renderPhrase = (number) => {
     if (number === 0) return 'Никто с тобой не тусанет'
     if (number === 1) return '1 человек тусанет с тобой сегодня'
@@ -16,8 +16,8 @@ const SearchStatus = ({quantity}) => {
 
   return (
     <h1>
-      <span className={`badge bg-${quantity ? 'primary' : 'danger'}`}>
-        {renderPhrase(quantity)}
+      <span className={`badge bg-${numberOfUsers ? 'primary' : 'danger'}`}>
+        {renderPhrase(numberOfUsers)}
       </span>
     </h1>
   )

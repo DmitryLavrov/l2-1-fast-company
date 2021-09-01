@@ -3,7 +3,9 @@ import React from 'react'
 const Qualities = ({qualities}) => {
   return (
     <>
-      {qualities.map(quality => <Quality key={quality._id} {...quality}/>)}
+      {qualities.map(quality => (
+        <Quality key={quality._id} {...quality}/>
+      ))}
     </>
   )
 }
