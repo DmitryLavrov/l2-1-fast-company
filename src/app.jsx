@@ -8,24 +8,24 @@ const App = () => {
   const [users, setUsers] = useState(api.users.fetchAll())
 
   const handleDelete = (userId) => {
-    setUsers(users.filter(user => user._id !== userId))
+    setUsers(users.filter((user) => user._id !== userId))
   }
 
   const handleBookmark = (userId) => {
-    setUsers(users.filter(user=>{
-      if (user._id === userId) {
-        user.bookmark = !user.bookmark
-      }
-      return user
-    }))
+    setUsers(
+      users.filter((user) => {
+        if (user._id === userId) {
+          user.bookmark = !user.bookmark
+        }
+        return user
+      })
+    )
   }
 
   return (
     <div>
-      <SearchStatus numberOfUsers={users.length}/>
-      <Users users={users}
-             onDelete={handleDelete}
-             onBookmark={handleBookmark}/>
+      <SearchStatus numberOfUsers={users.length} />
+      <Users users={users} onDelete={handleDelete} onBookmark={handleBookmark} />
     </div>
   )
 }

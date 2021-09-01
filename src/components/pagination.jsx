@@ -12,11 +12,12 @@ const Pagination = ({numberOfUsers, usersPerPage, currentPage, onPageChange}) =>
   return (
     <nav aria-label="Page navigation example">
       <ul className="pagination">
-        {pageNumbers.map(pageNumber => {
+        {pageNumbers.map((pageNumber) => {
           return (
             <li key={pageNumber} className={'page-item' + (pageNumber === currentPage ? ' active' : '')}>
-              <button className={'page-link'}
-                 onClick={() => onPageChange(pageNumber)}>{pageNumber}</button>
+              <button className={'page-link'} onClick={() => onPageChange(pageNumber)}>
+                {pageNumber}
+              </button>
             </li>
           )
         })}
