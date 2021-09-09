@@ -13,19 +13,13 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    indent: [
-      'error',
-      2,
-      {
-        ObjectExpression: 'first',
-        ArrayExpression: 'first',
-        FunctionDeclaration: {parameters: 'first'},
-        FunctionExpression: {parameters: 'first'},
-        CallExpression: {arguments: 'first'}
-      }
-    ],
+    indent: 'off',
     semi: ['error', 'never'],
-    'space-before-function-paren': ['error', 'never'],
+    'space-before-function-paren': ['error', {
+      anonymous: 'always',
+      named: 'never',
+      asyncArrow: 'always'
+    }],
     quotes: ['error', 'single', {allowTemplateLiterals: true, avoidEscape: true}],
     'object-curly-spacing': ['error', 'never']
   }

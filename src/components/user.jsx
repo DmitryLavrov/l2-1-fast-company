@@ -1,7 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Qualities from './qualities'
 import Bookmark from './bookmark'
-import PropTypes from 'prop-types'
 
 const User = ({_id, name, profession, qualities, completedMeetings, rate, bookmark, onDelete, onBookmark}) => {
   return (
