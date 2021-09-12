@@ -15,7 +15,7 @@ const Users = ({users: allUsers, ...rest}) => {
   const [selectedProf, setSelectedProf] = useState()
 
   useEffect(() => {
-    api.professions.fetchAll.then(data => setProfessions(data))
+    api.professions.fetchAll().then(data => setProfessions(data))
   }, [])
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Users = ({users: allUsers, ...rest}) => {
     setSelectedProf()
   }
 
-  const filteredUsers = selectedProf ? allUsers.filter(user => user.profession === selectedProf) : allUsers
+  const filteredUsers = selectedProf ? allUsers.filter(user => user.profession._id === selectedProf._id) : allUsers
   const numberOfUsers = filteredUsers.length
 
   if (currentPage >= numberOfUsers / usersPerPage + 1) {
