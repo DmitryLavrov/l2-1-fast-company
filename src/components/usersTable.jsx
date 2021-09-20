@@ -1,14 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import TableHeader from './tableHeader'
-import TableBody from './tableBody'
 import Bookmark from './bookmark'
+import Qualities from './qualities'
+import Table from './table'
 
 const UsersTable = ({users, onSort, sortSet, onBookmark, onDelete}) => {
   const columns = {
     name: {path: 'name', name: 'Имя'},
-    qualities: {name: 'Качества'},
+    qualities: {
+      name: 'Качества',
+      component: (user) => (
+        <Qualities qualities={user.qualities}/>)
+    },
     profession: {path: 'profession.name', name: 'Профессия'},
     completedMeetings: {path: 'completedMeetings', name: 'Встретился, раз'},
     rate: {path: 'rate', name: 'Оценка'},
@@ -27,10 +31,11 @@ const UsersTable = ({users, onSort, sortSet, onBookmark, onDelete}) => {
   }
 
   return (
-    <table className="table table-hover">
-      <TableHeader {...{columns, sortSet, onSort}}/>
-      <TableBody {...{columns, data: users}}/>
-    </table>
+    <Table {...{data: users, columns, sortSet, onSort}}/>
+    // <Table>
+    //   <TableHeader {...{columns, sortSet, onSort}}/>
+    //   <TableBody {...{columns, data: users}}/>
+    // </Table>
   )
 }
 
