@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import PropTypes from 'prop-types'
 import _ from 'lodash'
 
 import api from '../api'
@@ -9,13 +8,18 @@ import GroupList from './groupList'
 import SearchStatus from './searchStatus'
 import UsersTable from './usersTable'
 
-const Users = ({users: allUsers, ...rest}) => {
+const UsersList = () => {
   const usersPerPage = 8
 
+  const [allUsers, setAllUsers] = useState()
   const [currentPage, setCurrentPage] = useState(1)
   const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({path: 'rate', order: 'acs'})
+
+  useEffect(() => {
+    api.users.fetchAll().then((data) => setAllUsers(data))
+  }, [])
 
   useEffect(() => {
     api.professions.fetchAll().then(data => setProfessions(data))
@@ -24,6 +28,23 @@ const Users = ({users: allUsers, ...rest}) => {
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedProf])
+
+  if (!allUsers) return <h3>Loading...</h3>
+
+  const handleDelete = (userId) => {
+    setAllUsers(allUsers.filter((user) => user._id !== userId))
+  }
+
+  const handleBookmark = (userId) => {
+    setAllUsers(
+      allUsers.filter((user) => {
+        if (user._id === userId) {
+          user.bookmark = !user.bookmark
+        }
+        return user
+      })
+    )
+  }
 
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex)
@@ -64,7 +85,8 @@ const Users = ({users: allUsers, ...rest}) => {
       <div className="d-flex flex-column">
         <SearchStatus numberOfUsers={numberOfUsers}/>
         {numberOfUsers > 0 && (
-          <UsersTable users={usersOfPage} onSort={handleSort} sortSet={sortBy} {...rest}/>
+          <UsersTable users={usersOfPage} onSort={handleSort} sortSet={sortBy} onDelete={handleDelete}
+                      onBookmark={handleBookmark}/>
         )}
         <div className="d-flex justify-content-center">
           <Pagination
@@ -80,8 +102,4 @@ const Users = ({users: allUsers, ...rest}) => {
   )
 }
 
-Users.propTypes = {
-  users: PropTypes.array.isRequired
-}
-
-export default Users
+export default UsersList

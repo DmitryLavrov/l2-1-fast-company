@@ -1,4 +1,5 @@
 import {professionsObject as professions} from './professions.api'
+// import {resolve} from 'eslint-plugin-promise/rules/lib/promise-statics'
 
 const qualities = {
   tedious: {
@@ -151,6 +152,12 @@ const fetchAll = () =>
     }, 2000)
   })
 
+const getById = (id) =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve(users.find(user => user._id === id)), 1000)
+  })
+
 export default {
-  fetchAll
+  fetchAll,
+  getById
 }
