@@ -16,6 +16,7 @@ const UsersList = () => {
   const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({path: 'rate', order: 'acs'})
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     api.users.fetchAll().then((data) => setAllUsers(data))
@@ -28,6 +29,10 @@ const UsersList = () => {
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedProf])
+
+  useEffect(() => {
+
+  }, [search])
 
   if (!allUsers) return <h3>Loading...</h3>
 
@@ -52,17 +57,34 @@ const UsersList = () => {
 
   const handleProfessionSelect = (item) => {
     setSelectedProf(item)
+    setSearch('')
   }
 
   const handleSort = (sortSet) => {
     setSortBy(sortSet)
   }
 
-  const clearFilter = () => {
+  const handleSearch = (event) => {
+    setSearch(event.target.value)
     setSelectedProf()
   }
 
-  const filteredUsers = selectedProf ? allUsers.filter(user => user.profession._id === selectedProf._id) : allUsers
+  const clearFilter = () => {
+    setSelectedProf()
+    setSearch('')
+  }
+
+  const filterUsers = () => {
+    if (selectedProf) {
+      return allUsers.filter(user => user.profession._id === selectedProf._id)
+    }
+    if (search) {
+      return allUsers.filter(user => user.name.includes(search))
+    }
+    return allUsers
+  }
+
+  const filteredUsers = filterUsers()
 
   const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order])
 
@@ -84,17 +106,16 @@ const UsersList = () => {
       }
       <div className="d-flex flex-column">
         <SearchStatus numberOfUsers={numberOfUsers}/>
+        <input type="text" value={search} onChange={handleSearch} className="form-control" placeholder="Search..."/>
         {numberOfUsers > 0 && (
           <UsersTable users={usersOfPage} onSort={handleSort} sortSet={sortBy} onDelete={handleDelete}
                       onBookmark={handleBookmark}/>
         )}
         <div className="d-flex justify-content-center">
-          <Pagination
-            numberOfUsers={numberOfUsers}
-            usersPerPage={usersPerPage}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          <Pagination numberOfUsers={numberOfUsers}
+                      usersPerPage={usersPerPage}
+                      currentPage={currentPage}
+                      onPageChange={handlePageChange}/>
         </div>
       </div>
 
