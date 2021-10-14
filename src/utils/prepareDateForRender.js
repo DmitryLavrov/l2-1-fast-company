@@ -1,5 +1,6 @@
 export function prepareDateForRender(start, end) {
-  const interval = end - start
+  const startNum = typeof start === 'string' ? Number(start) : start
+  const interval = end - startNum
   const diffMinutes = interval / 1000 / 60
   if (diffMinutes < 1) return '1 минуту назад'
   if (diffMinutes < 5) return '5 минут назад'
@@ -7,7 +8,7 @@ export function prepareDateForRender(start, end) {
   if (diffMinutes < 30) return '30 минут назад'
 
   const diffDays = interval / 1000 / 60 / 60 / 24
-  const startDate = new Date(start)
+  const startDate = new Date(startNum)
 
   const minutes = ('0' + startDate.getMinutes()).slice(-2)
   const hours = ('0' + startDate.getHours()).slice(-2)
