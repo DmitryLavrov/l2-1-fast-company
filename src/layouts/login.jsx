@@ -1,72 +1,38 @@
-import React, {useEffect, useState} from 'react'
-import PropTypes from 'prop-types'
-
-import TextField from '../components/textField'
-import {validator} from '../utils/validator'
+import React, {useState} from 'react'
+import LoginForm from '../components/ui/loginForm'
+import {useParams} from 'react-router-dom'
+import RegisterForm from '../components/ui/registerForm'
 
 const Login = () => {
-  const [data, setData] = useState({email: '', password: ''})
-  const [errors, setErrors] = useState({})
+  const {type} = useParams()
+  const [formType, setFormType] = useState(type === 'register' ? type : 'login')
 
-  const isValid = (Object.keys(errors).length === 0)
-
-  const handleChange = (event) => {
-    setData(prev => ({
-      ...prev,
-      [event.target.name]: event.target.value
-    }))
-  }
-
-  const validatorConfig = {
-    email: {
-      isRequired: {message: 'Электронная почта обязательна для заполнения'},
-      isEmail: {message: 'Введите корректный email'}
-    },
-    password: {
-      isRequired: {message: 'Пароль обязателен для заполнения'},
-      hasCapital: {message: 'Пароль должен содержать хотя бы одну заглавную букву'},
-      hasNumber: {message: 'Пароль должен содержать хотя бы одну цифру'},
-      min: {message: 'Пароль должен состоять из 8 и более символов', value: 8}
-    }
-  }
-
-  useEffect(() => {
-    validate()
-  }, [data])
-
-  const validate = () => {
-    const errors = validator(data, validatorConfig)
-    setErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    const isValidate = validate()
-    if (isValidate) return
-    console.log('Error', data)
+  const toggleFormType = (params) => {
+    setFormType(prev => prev === 'register' ? 'login' : 'register')
   }
 
   return (
     <div className="container mt-5">
       <div className="row">
         <div className="offset-md-3 col-md-6 shadow p-3">
-          <h3 className="mb-3">Login</h3>
-          <form onSubmit={handleSubmit}>
-            <TextField name="email" label="Электронная почта" value={data.email} onChange={handleChange}
-                       error={errors.email}/>
-            <TextField name="password" label="Пароль" type="password" value={data.password} onChange={handleChange}
-                       error={errors.password}/>
-            <button type="submit" disabled={!isValid} className="btn btn-outline-primary w-100">Submit</button>
-          </form>
+          {formType === 'register'
+            ? <>
+              <h3 className="mb-3">Register</h3>
+              <RegisterForm/>
+              <p>Already have account?
+              <a role="button" onClick={toggleFormType}>Sign in</a></p>
+            </>
+            : <>
+              <h3 className="mb-3">Login</h3>
+              <LoginForm/>
+              <p>Dont have account?
+              <a role="button" onClick={toggleFormType}>Sign up</a></p>
+            </>
+          }
         </div>
       </div>
     </div>
   )
-}
-
-Login.propTypes = {
-  isAdmin: PropTypes.bool
 }
 
 export default Login

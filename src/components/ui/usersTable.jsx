@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import Bookmark from './bookmark'
-import Qualities from './qualities'
-import Table from './table'
+import Bookmark from '../common/bookmark'
+import Qualities from './qualities/qualities'
+import Table from '../common/table'
 import {Link} from 'react-router-dom'
 
 const UsersTable = ({users, onSort, sortSet, onBookmark, onDelete}) => {
@@ -11,11 +11,13 @@ const UsersTable = ({users, onSort, sortSet, onBookmark, onDelete}) => {
     name: {
       path: 'name',
       name: 'Имя',
+      // eslint-disable-next-line react/display-name
       component: (user) => (
         <Link to={`/users/${user._id}`}>{user.name}</Link>)
     },
     qualities: {
       name: 'Качества',
+      // eslint-disable-next-line react/display-name
       component: (user) => (
         <Qualities qualities={user.qualities}/>)
     },
@@ -25,10 +27,12 @@ const UsersTable = ({users, onSort, sortSet, onBookmark, onDelete}) => {
     bookmark: {
       path: 'bookmark',
       name: 'Избранное',
+      // eslint-disable-next-line react/display-name
       component: (user) => (
         <Bookmark status={user.bookmark} onBookmark={() => onBookmark(user._id)}/>)
     },
     delete: {
+      // eslint-disable-next-line react/display-name
       component: (user) => (
         <button className="btn btn-outline-danger" type="button" onClick={() => onDelete(user._id)}>
           Delete

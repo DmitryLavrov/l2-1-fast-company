@@ -21,3 +21,7 @@
 # Lesson 9
 
 ![img.png](assets/img5.png)
+
+# Lesson 10
+
+![img.png](assets/img6.png)

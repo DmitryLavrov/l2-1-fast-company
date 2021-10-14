@@ -4,7 +4,13 @@ export function validator(data, config) {
   function validate(validateMethod, data, config) {
     switch (validateMethod) {
       case 'isRequired':
-        if (data.trim() === '') return config.message
+        if (typeof data === 'boolean') {
+          if (!data) return config.message
+        } else if (typeof data === 'object') {
+          if (Object.keys(data).length === 0) return config.message
+        } else {
+          if (data.trim() === '') return config.message
+        }
         break
       case 'isEmail':
         // eslint-disable-next-line no-case-declarations
