@@ -21,6 +21,6 @@ module.exports = {
       asyncArrow: 'always'
     }],
     quotes: ['error', 'single', {allowTemplateLiterals: true, avoidEscape: true}],
-    'object-curly-spacing': ['error', 'never']
+    'object-curly-spacing': ['off', 'never']
   }
 }

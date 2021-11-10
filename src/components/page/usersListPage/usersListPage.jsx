@@ -1,54 +1,54 @@
 import React, {useEffect, useState} from 'react'
 import _ from 'lodash'
 
-import api from '../../../api'
+// import api from '../../../api'
 import Pagination from '../../common/pagination'
 import {paginate} from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
+import { useUser } from '../../../hooks/useUsers'
+import { useProfessions } from '../../../hooks/useProfession'
 
 const UsersListPage = () => {
   const usersPerPage = 8
 
-  const [allUsers, setAllUsers] = useState()
   const [currentPage, setCurrentPage] = useState(1)
-  const [professions, setProfessions] = useState()
+  // const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({path: 'rate', order: 'acs'})
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    api.users.fetchAll().then((data) => setAllUsers(data))
-  }, [])
+  const {users: allUsers} = useUser()
+  const {professions} = useProfessions()
 
-  useEffect(() => {
-    api.professions.fetchAll().then(data => setProfessions(data))
-  }, [])
+  // useEffect(() => {
+  //   api.professions.fetchAll().then(data => setProfessions(data))
+  // }, [])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [selectedProf])
-
-  useEffect(() => {
-
-  }, [search])
+  }, [selectedProf, search])
 
   if (!allUsers) return <h3>Loading...</h3>
 
   const handleDelete = (userId) => {
-    setAllUsers(allUsers.filter((user) => user._id !== userId))
+    // setAllUsers(allUsers.filter((user) => user._id !== userId))
+    // =========================
+    console.log('userId:', userId)
+    // =========================
   }
 
   const handleBookmark = (userId) => {
-    setAllUsers(
-      allUsers.filter((user) => {
+    const newArray = allUsers.map((user) => {
         if (user._id === userId) {
-          user.bookmark = !user.bookmark
+          return {...user, bookmark: !user.bookmark}
         }
         return user
       })
-    )
+    // =========================
+    console.log('newArray:', newArray)
+    // =========================
   }
 
   const handlePageChange = (pageIndex) => {
@@ -76,10 +76,10 @@ const UsersListPage = () => {
 
   const filterUsers = () => {
     if (selectedProf) {
-      return allUsers.filter(user => user.profession._id === selectedProf._id)
+      return allUsers.filter(user => user.profession === selectedProf._id)
     }
     if (search) {
-      return allUsers.filter(user => user.name.includes(search))
+      return allUsers.filter(user => user.name.toLowerCase().includes(search.toLowerCase()))
     }
     return allUsers
   }
@@ -108,7 +108,10 @@ const UsersListPage = () => {
         <SearchStatus numberOfUsers={numberOfUsers}/>
         <input type="text" value={search} onChange={handleSearch} className="form-control" placeholder="Search..."/>
         {numberOfUsers > 0 && (
-          <UsersTable users={usersOfPage} onSort={handleSort} sortSet={sortBy} onDelete={handleDelete}
+          <UsersTable users={usersOfPage}
+                      onSort={handleSort}
+                      sortSet={sortBy}
+                      onDelete={handleDelete}
                       onBookmark={handleBookmark}/>
         )}
         <div className="d-flex justify-content-center">
