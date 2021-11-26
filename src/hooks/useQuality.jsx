@@ -38,7 +38,7 @@ export const QualityProvider = ({children}) => {
   }
 
   function errorCatcher(error) {
-    setError(error.response.data.message)
+    setError(error.message)
     setIsLoading(false)
   }
 

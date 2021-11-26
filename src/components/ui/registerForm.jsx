@@ -1,12 +1,15 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 
-import {validator} from '../../utils/validator'
+import { validator } from '../../utils/validator'
 import TextField from '../common/form/textField'
-import api from '../../api'
 import SelectField from '../common/form/selectField'
 import RadioField from '../common/form/radioField'
 import MultiSelectField from '../common/form/multiSelectField'
 import CheckboxField from '../common/form/checkboxField'
+import { useQualities } from '../../hooks/useQuality'
+import { useProfessions } from '../../hooks/useProfession'
+import { useAuth } from '../../hooks/useAuth'
+import { useHistory } from 'react-router-dom'
 
 const RegisterForm = () => {
   const [data, setData] = useState({
@@ -18,15 +21,17 @@ const RegisterForm = () => {
     license: false
   })
   const [errors, setErrors] = useState({})
-  const [professions, setProfessions] = useState()
-  const [qualities, setQualities] = useState({})
 
-  useEffect(() => {
-    api.professions.fetchAll().then(data => setProfessions(data))
-    api.qualities.fetchAll().then(data => setQualities(data))
-  }, [])
+  const {professions} = useProfessions()
+  const professionsList = professions.map(p => ({label: p.name, value: p._id}))
 
+  const {qualities} = useQualities()
+  const qualitiesList = qualities.map(q => ({label: q.name, value: q._id}))
+
+  const {singUp} = useAuth()
   const isValid = (Object.keys(errors).length === 0)
+
+  const history = useHistory()
 
   const handleChange = (field) => {
     setData(prev => ({
@@ -64,11 +69,18 @@ const RegisterForm = () => {
     return Object.keys(errors).length === 0
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
     const isValid = validate()
     if (!isValid) return
-    console.log('Submit', data)
+    const newData = {...data, qualities: data.qualities.map(q => q.value)}
+
+    try {
+      await singUp(newData)
+      history.push('/')
+    } catch (err) {
+      setErrors(err)
+    }
   }
 
   return (
@@ -78,8 +90,12 @@ const RegisterForm = () => {
       <TextField name="password" label="Пароль" type="password" value={data.password} onChange={handleChange}
                  error={errors.password}/>
 
-      <SelectField value={data.profession} options={professions} onChange={handleChange} defaultOption="Choose..."
-                   error={errors.profession} label="Выберите профессию"/>
+      <SelectField value={data.profession}
+                   options={professionsList}
+                   onChange={handleChange}
+                   defaultOption="Choose..."
+                   error={errors.profession}
+                   label="Выберите профессию"/>
 
       <RadioField value={data.sex} name="sex" onChange={handleChange} label="Выберите пол" options={[
         {name: 'Male', value: 'male'},
@@ -87,7 +103,10 @@ const RegisterForm = () => {
         {name: 'Other', value: 'other'}
       ]}/>
 
-      <MultiSelectField name="qualities" options={qualities} onChange={handleChange} label="Выберите качества"/>
+      <MultiSelectField name="qualities"
+                        options={qualitiesList}
+                        onChange={handleChange}
+                        label="Выберите качества"/>
 
       <CheckboxField value={data.license} onChange={handleChange} name="license" error={errors.license}>
         Подтвердить <a>лицензионное соглашение</a>

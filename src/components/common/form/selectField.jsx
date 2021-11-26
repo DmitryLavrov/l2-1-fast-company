@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const SelectField = ({label, value, onChange, defaultOption, options, error}) => {
   const optionsArray = (!Array.isArray(options)) && (typeof options === 'object')
-    ? Object.keys(options).map(i => ({name: options[i].name, _id: options[i]._id}))
+    ? Object.keys(options).map(i => ({label: options[i].label, value: options[i].value}))
     : options
 
   const handleChange = (event) => {
@@ -22,7 +22,7 @@ const SelectField = ({label, value, onChange, defaultOption, options, error}) =>
         </option>
 
         {optionsArray && optionsArray.map(i => (
-          <option key={i._id} value={i._id}>{i.name}</option>
+          <option key={i.value} value={i.value}>{i.label}</option>
         ))}
 
       </select>

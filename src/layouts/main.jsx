@@ -1,20 +1,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {useHistory, useLocation, useParams, useRouteMatch} from 'react-router-dom'
+import useMockData from '../utils/mockData'
 
 const Main = ({isAdmin}) => {
-  const params = useParams()
-  const history = useHistory()
-  const location = useLocation()
-  const routeMatch = useRouteMatch()
-  console.log('params', params)
-  console.log('history', history)
-  console.log('location', location)
-  console.log('routeMatch', routeMatch)
-  console.log('isAdmin', isAdmin)
+  const {error, initialize, progress, status} = useMockData()
+
+  const handleClick = () => {
+    // =========================
+    console.log('clicked')
+    // =========================
+    initialize()
+  }
   return (
-    <div>
-      Main
+    <div className="container mt-5">
+      <h1>Main</h1>
+      <h3>Инициализация данных в Firebase</h3>
+      <button className="btn btn-outline-primary"
+              onClick={handleClick}>
+        Инициализировать
+      </button>
+      <ul>
+        <li>Status: {status}</li>
+        <li>Progress: {progress}</li>
+        {error && <li>Error: {error}</li>}
+      </ul>
     </div>
   )
 }
