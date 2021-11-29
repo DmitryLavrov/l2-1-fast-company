@@ -57,10 +57,6 @@ const AuthProvider = ({children}) => {
       await getUser(data.localId)
       // =========================
       console.log('currentUser:', currentUser)
-      console.log('currentUser:', currentUser._id)
-      console.log('currentUser:', currentUser.email)
-      console.log('currentUser:', currentUser.profession)
-      console.log('currentUser:', currentUser.qualities)
       // =========================
     } catch (err) {
       errorCatcher(err)
