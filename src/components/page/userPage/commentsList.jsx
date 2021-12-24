@@ -2,9 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import Comment from './comment'
+import { useComments } from '../../../hooks/useComments'
 
-const CommentsList = ({comments, onDelete}) => {
-  const sortedComments = comments.sort((a, b) => b.created_at - a.created_at)
+const CommentsList = () => {
+  const {comments, deleteComment} = useComments()
+
+  const handleDelete = (id) => {
+    deleteComment(id)
+  }
+
+  const sortedComments = comments?.sort((a, b) => b.createdAt - a.createdAt)
 
   return (
     <div className="card mb-3">
@@ -13,7 +20,7 @@ const CommentsList = ({comments, onDelete}) => {
         <hr/>
 
         {sortedComments.map(comment => (
-          <Comment key={comment._id} comment={comment} onDelete={onDelete}/>
+          <Comment key={comment._id} comment={comment} onDelete={handleDelete}/>
         ))}
 
       </div>

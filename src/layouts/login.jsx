@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import LoginForm from '../components/ui/loginForm'
-import {useParams} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import RegisterForm from '../components/ui/registerForm'
 
 const Login = () => {
@@ -19,14 +19,21 @@ const Login = () => {
             ? <>
               <h3 className="mb-3">Register</h3>
               <RegisterForm/>
-              <p>Already have account?
-              <a role="button" onClick={toggleFormType}>Sign in</a></p>
+              <p>Already have account?&nbsp;
+                <a role="button"
+                   style={{color: 'blueviolet', fontWeight: 'bold'}}
+                   onClick={toggleFormType}>Log in</a></p>
             </>
             : <>
               <h3 className="mb-3">Login</h3>
               <LoginForm/>
-              <p>Dont have account?
-              <a role="button" onClick={toggleFormType}>Sign up</a></p>
+              <p>Dont have account?&nbsp;
+                <a role="button"
+                   style={{color: 'blueviolet', fontWeight: 'bold'}}
+                   onClick={toggleFormType}>
+                  Sign up
+                </a>
+              </p>
             </>
           }
         </div>

@@ -1,36 +1,16 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import {useHistory} from 'react-router-dom'
 
-import api from '../../../api'
-import UserCards from './userCards'
+import UserCard from './userCard'
 import CommentsList from './commentsList'
 import CommentForm from './commentForm'
+import { useUser } from '../../../hooks/useUsers'
+import { CommentsProvider } from '../../../hooks/useComments'
 
 const UserPage = ({userId}) => {
-  const [user, setUser] = useState()
-  const history = useHistory()
-  const [comments, setComments] = useState([])
+  const {getUserById} = useUser()
 
-  useEffect(() => {
-    api.users.getById(userId).then(user => setUser(user))
-  }, [])
-
-  useEffect(() => {
-    fetchComments()
-  }, [])
-
-  const fetchComments = () => {
-    api.comments.fetchCommentsForUser(userId).then((data) => setComments(data))
-  }
-
-  const handleDeleteComment = (id) => {
-    api.comments.remove(id).then(fetchComments)
-  }
-
-  const handleButton = () => {
-    history.push(`/users/${userId}/edit`)
-  }
+  const user = getUserById(userId)
 
   if (!user) return <h3>Loading....</h3>
 
@@ -38,15 +18,16 @@ const UserPage = ({userId}) => {
     <div className="container">
       <div className="row gutters-sm">
 
-        <UserCards user={user} onClickButton={handleButton}/>
+        <UserCard user={user}/>
 
-        <div className="col-md-8">
-          <CommentForm userId={userId} renderComments={fetchComments}/>
+        <CommentsProvider>
+          <div className="col-md-8">
+            <CommentForm/>
 
-          {(comments.length > 0) &&
-          <CommentsList comments={comments} onDelete={handleDeleteComment}/>
-          }
-        </div>
+            <CommentsList/>
+          </div>
+        </CommentsProvider>
+
       </div>
     </div>
   )

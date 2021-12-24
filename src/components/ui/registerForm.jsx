@@ -11,21 +11,37 @@ import { useProfessions } from '../../hooks/useProfession'
 import { useAuth } from '../../hooks/useAuth'
 import { useHistory } from 'react-router-dom'
 
+const validatorConfig = {
+  email: {
+    isRequired: {message: 'Электронная почта обязательна для заполнения'},
+    isEmail: {message: 'Введите корректный email'}
+  },
+  name: {
+    isRequired: {message: 'Имя обязательно для заполнения'},
+    min: {message: 'Имя должно состоять из 3 и более символов', value: 3}
+  },
+  password: {
+    isRequired: {message: 'Пароль обязателен для заполнения'},
+    hasCapital: {message: 'Пароль должен содержать хотя бы одну заглавную букву'},
+    hasNumber: {message: 'Пароль должен содержать хотя бы одну цифру'},
+    min: {message: 'Пароль должен состоять из 8 и более символов', value: 8}
+  },
+  profession: {
+    isRequired: {message: 'Профессию выбрать обязательно'}
+  },
+  license: {
+    isRequired: {message: 'Вы не можете использовать наш сервис без подтверждения лицензионного соглашения'}
+  }
+}
+
 const RegisterForm = () => {
-  const [data, setData] = useState({
-    email: '',
-    password: '',
-    profession: '',
-    sex: 'male',
-    qualities: [],
-    license: false
-  })
+  const [data, setData] = useState(null)
   const [errors, setErrors] = useState({})
 
-  const {professions} = useProfessions()
+  const {professions, isLoading: professionIsLoading} = useProfessions()
   const professionsList = professions.map(p => ({label: p.name, value: p._id}))
 
-  const {qualities} = useQualities()
+  const {qualities, isLoading: qualityIsLoading} = useQualities()
   const qualitiesList = qualities.map(q => ({label: q.name, value: q._id}))
 
   const {singUp} = useAuth()
@@ -33,35 +49,30 @@ const RegisterForm = () => {
 
   const history = useHistory()
 
+  useEffect(() => {
+    if (!professionIsLoading && !qualityIsLoading) {
+      setData({
+        email: '',
+        password: '',
+        profession: '',
+        sex: 'male',
+        name: '',
+        qualities: [],
+        license: false
+      })
+    }
+  }, [professionIsLoading, qualityIsLoading])
+
+  useEffect(() => {
+    validate()
+  }, [data])
+
   const handleChange = (field) => {
     setData(prev => ({
       ...prev,
       [field.name]: field.value
     }))
   }
-
-  const validatorConfig = {
-    email: {
-      isRequired: {message: 'Электронная почта обязательна для заполнения'},
-      isEmail: {message: 'Введите корректный email'}
-    },
-    password: {
-      isRequired: {message: 'Пароль обязателен для заполнения'},
-      hasCapital: {message: 'Пароль должен содержать хотя бы одну заглавную букву'},
-      hasNumber: {message: 'Пароль должен содержать хотя бы одну цифру'},
-      min: {message: 'Пароль должен состоять из 8 и более символов', value: 8}
-    },
-    profession: {
-      isRequired: {message: 'Профессию выбрать обязательно'}
-    },
-    license: {
-      isRequired: {message: 'Вы не можете использовать наш сервис без подтверждения лицензионного соглашения'}
-    }
-  }
-
-  useEffect(() => {
-    validate()
-  }, [data])
 
   const validate = () => {
     const errors = validator(data, validatorConfig)
@@ -83,36 +94,59 @@ const RegisterForm = () => {
     }
   }
 
+  if (!data) {
+    return <h1>Loading...</h1>
+  }
+
   return (
     <form onSubmit={handleSubmit}>
-      <TextField name="email" label="Электронная почта" value={data.email} onChange={handleChange}
+      <TextField name="email"
+                 label="Электронная почта"
+                 value={data.email}
+                 onChange={handleChange}
                  error={errors.email}/>
-      <TextField name="password" label="Пароль" type="password" value={data.password} onChange={handleChange}
+      <TextField name="name"
+                 label="Имя"
+                 value={data.name}
+                 onChange={handleChange}
+                 error={errors.name}/>
+      <TextField name="password"
+                 label="Пароль"
+                 type="password"
+                 value={data.password}
+                 onChange={handleChange}
                  error={errors.password}/>
-
       <SelectField value={data.profession}
                    options={professionsList}
                    onChange={handleChange}
                    defaultOption="Choose..."
                    error={errors.profession}
                    label="Выберите профессию"/>
-
-      <RadioField value={data.sex} name="sex" onChange={handleChange} label="Выберите пол" options={[
-        {name: 'Male', value: 'male'},
-        {name: 'Female', value: 'female'},
-        {name: 'Other', value: 'other'}
-      ]}/>
-
+      <RadioField value={data.sex}
+                  name="sex"
+                  onChange={handleChange}
+                  label="Выберите пол"
+                  options={[
+                    {name: 'Male', value: 'male'},
+                    {name: 'Female', value: 'female'},
+                    {name: 'Other', value: 'other'}
+                  ]}/>
       <MultiSelectField name="qualities"
                         options={qualitiesList}
                         onChange={handleChange}
                         label="Выберите качества"/>
-
-      <CheckboxField value={data.license} onChange={handleChange} name="license" error={errors.license}>
+      <CheckboxField value={data.license}
+                     onChange={handleChange}
+                     name="license"
+                     error={errors.license}>
         Подтвердить <a>лицензионное соглашение</a>
       </CheckboxField>
 
-      <button type="submit" disabled={!isValid} className="btn btn-outline-primary w-100">Submit</button>
+      <button type="submit"
+              disabled={!isValid}
+              className="btn btn-outline-primary w-100">
+        Submit
+      </button>
     </form>
 
   )

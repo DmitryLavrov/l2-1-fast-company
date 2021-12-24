@@ -5,10 +5,10 @@ import UserCardInfo from './userCardInfo'
 import UserCardQualities from './userCardQualities'
 import UserCardMeetings from './userCardMeetings'
 
-const UserCards = ({user, onClickButton}) => {
+const UserCard = ({user}) => {
   return (
     <div className="col-md-4 mb-3">
-      <UserCardInfo name={user.name} profession={user.profession.name} rate={user.rate} onClickButton={onClickButton}/>
+      <UserCardInfo user={user}/>
 
       <UserCardQualities qualities={user.qualities}/>
 
@@ -17,9 +17,9 @@ const UserCards = ({user, onClickButton}) => {
   )
 }
 
-UserCards.propTypes = {
+UserCard.propTypes = {
   user: PropTypes.object,
   onClickButton: PropTypes.func
 }
 
-export default UserCards
+export default UserCard

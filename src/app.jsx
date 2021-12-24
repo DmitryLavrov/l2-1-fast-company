@@ -10,6 +10,9 @@ import Login from './layouts/login'
 import { ProfessionProvider } from './hooks/useProfession'
 import { QualityProvider } from './hooks/useQuality'
 import AuthProvider from './hooks/useAuth'
+import ProtectedRoute from './components/common/protectedRoute'
+import Logout from './layouts/logout'
+import EditUserPage from './components/page/editUserPage/editUserPage'
 
 const App = () => {
   return (
@@ -20,8 +23,9 @@ const App = () => {
           <QualityProvider>
             <Switch>
               <Route path="/login/:type?"><Login/></Route>
-              <Route path="/users/:userId?"><Users/></Route>
-              {/* <Route path="/users/:userId?/edit"><EditForm/></Route> */}
+              <Route path="/logout"><Logout/></Route>
+              <Route path="/users/:userId?/edit"><EditUserPage/></Route>
+              <ProtectedRoute path="/users/:userId?"><Users/></ProtectedRoute>
               <Route path="/" exact><Main/></Route>
               <Redirect to="/"/>
             </Switch>

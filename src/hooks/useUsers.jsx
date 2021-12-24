@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import userService from '../services/user.resvice'
+import userService from '../services/user.service'
 import { toast } from 'react-toastify'
 
 const UserContext = React.createContext()
@@ -33,15 +33,19 @@ const UserProvider = ({children}) => {
     }
   }
 
-  function errorCatcher(error) {
-    setError(error.response.data.message)
+  function getUserById(id) {
+    return users.find(user => user._id === id)
+  }
+
+  function errorCatcher(err) {
+    setError(err.response?.data?.error?.message || err.message)
     setIsLoading(false)
   }
 
   return (
-    <UserContext.Provider value={{users}}>
+    <UserContext.Provider value={{users, getUserById}}>
       {isLoading
-        ? 'Loading'
+        ? 'Loading...'
         : children}
     </UserContext.Provider>
   )

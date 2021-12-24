@@ -1,71 +1,71 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
-import api from '../../../api'
+import { useComments } from '../../../hooks/useComments'
+import TextField from '../../common/form/textField'
+import { validator } from '../../../utils/validator'
 
-const CommentForm = ({userId, renderComments}) => {
-  const [users, setUsers] = useState()
-  const [selectedUser, setSelectedUser] = useState()
-  const [message, setMessage] = useState()
+const validatorConfig = {
+  content: {
+    isRequired: {message: 'Сообщение не может быть пустым'}
+  }
+}
+
+const CommentForm = () => {
+  const [data, setData] = useState({content: ''})
+  const [errors, setErrors] = useState({})
+  const {createComment} = useComments()
 
   useEffect(() => {
-    api.users.fetchAll().then((data) => setUsers(data.filter(i => i._id !== userId)))
-  }, [])
+    validate()
+  }, [data])
 
-  const handleSelect = (event) => {
-    setSelectedUser(event.target.value)
+  const validate = () => {
+    const errors = validator(data, validatorConfig)
+    setErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
-  const handleTextArea = (event) => {
-    setMessage(event.target.value)
+  const handleChange = (field) => {
+    setData(prev => ({
+      ...prev,
+      [field.name]: field.value
+    }))
   }
 
-  const handleSend = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
+    const isValid = validate()
+    if (!isValid) return
 
-    api.comments.add({
-      pageId: userId,
-      userId: selectedUser,
-      content: message
-    }).then(renderComments()).then(() => {
-      setSelectedUser('')
-      setMessage('')
-    })
+    createComment(data)
   }
 
-  const isValid = selectedUser && message
+  const isValid = (Object.keys(errors).length === 0)
 
   return (
     <div className="card mb-2">
       <div className="card-body">
         <h2>New comment</h2>
-        <form onSubmit={handleSend}>
-          <div className="mb-4">
-            <select name="userId" value={selectedUser} onChange={handleSelect}
-                    className="form-select" required defaultValue="">
-              <option disabled value="">
-                Выберите пользователя
-              </option>
 
-              {users &&
-              users.map(user => (<option key={user._id} value={user._id}>{user.name}</option>))
-              }
-            </select>
-          </div>
+        <form onSubmit={handleSubmit}>
 
           <div className="mb-4">
-            <label htmlFor="exampleFormControlTextarea1" className="form-label">
-              Сообщение
-            </label>
-            <textarea value={message} onChange={handleTextArea} className="form-control"
-                      id="exampleFormControlTextarea1" rows="3"/>
+            <TextField name="content"
+                       label="Сообщение"
+                       value={data.content}
+                       onChange={handleChange}
+                       error={errors.content}/>
           </div>
 
           <div className="text-end">
-            <button className="btn btn-primary" type="submit" disabled={!isValid}>
+            <button className="btn btn-primary"
+                    type="submit"
+                    disabled={!isValid}>
               Отправить
             </button>
           </div>
+
         </form>
       </div>
     </div>

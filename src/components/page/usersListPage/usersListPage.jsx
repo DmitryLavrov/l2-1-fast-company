@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import _ from 'lodash'
 
-// import api from '../../../api'
 import Pagination from '../../common/pagination'
 import {paginate} from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
@@ -9,35 +8,25 @@ import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import { useUser } from '../../../hooks/useUsers'
 import { useProfessions } from '../../../hooks/useProfession'
+import { useAuth } from '../../../hooks/useAuth'
 
 const UsersListPage = () => {
   const usersPerPage = 8
 
   const [currentPage, setCurrentPage] = useState(1)
-  // const [professions, setProfessions] = useState()
   const [selectedProf, setSelectedProf] = useState()
   const [sortBy, setSortBy] = useState({path: 'rate', order: 'acs'})
   const [search, setSearch] = useState('')
 
   const {users: allUsers} = useUser()
-  const {professions} = useProfessions()
-
-  // useEffect(() => {
-  //   api.professions.fetchAll().then(data => setProfessions(data))
-  // }, [])
+  const {professions, isLoading: professionsLoading} = useProfessions()
+  const {currentUser} = useAuth()
 
   useEffect(() => {
     setCurrentPage(1)
   }, [selectedProf, search])
 
   if (!allUsers) return <h3>Loading...</h3>
-
-  const handleDelete = (userId) => {
-    // setAllUsers(allUsers.filter((user) => user._id !== userId))
-    // =========================
-    console.log('userId:', userId)
-    // =========================
-  }
 
   const handleBookmark = (userId) => {
     const newArray = allUsers.map((user) => {
@@ -75,13 +64,15 @@ const UsersListPage = () => {
   }
 
   const filterUsers = () => {
+    const users = allUsers.filter(user => user._id !== currentUser._id)
+
     if (selectedProf) {
-      return allUsers.filter(user => user.profession === selectedProf._id)
+      return users.filter(user => user.profession === selectedProf._id)
     }
     if (search) {
-      return allUsers.filter(user => user.name.toLowerCase().includes(search.toLowerCase()))
+      return users.filter(user => user.name.toLowerCase().includes(search.toLowerCase()))
     }
-    return allUsers
+    return users
   }
 
   const filteredUsers = filterUsers()
@@ -98,7 +89,7 @@ const UsersListPage = () => {
 
   return (
     <div className="d-flex">
-      {professions &&
+      {professions && !professionsLoading &&
       <div className="d-flex flex-column flex-lg-shrink-0 p-3">
         <GroupList selectedItem={selectedProf} items={professions} onItemSelect={handleProfessionSelect}/>
         <button className="btn btn-secondary mt-2" onClick={clearFilter}>Очистить</button>
@@ -111,7 +102,6 @@ const UsersListPage = () => {
           <UsersTable users={usersOfPage}
                       onSort={handleSort}
                       sortSet={sortBy}
-                      onDelete={handleDelete}
                       onBookmark={handleBookmark}/>
         )}
         <div className="d-flex justify-content-center">
