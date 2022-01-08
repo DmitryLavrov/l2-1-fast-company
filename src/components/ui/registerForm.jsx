@@ -6,10 +6,11 @@ import SelectField from '../common/form/selectField'
 import RadioField from '../common/form/radioField'
 import MultiSelectField from '../common/form/multiSelectField'
 import CheckboxField from '../common/form/checkboxField'
-import { useQualities } from '../../hooks/useQuality'
 import { useProfessions } from '../../hooks/useProfession'
 import { useAuth } from '../../hooks/useAuth'
 import { useHistory } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { getQualities, getQualitiesLoadingStatus } from '../../store/qualities'
 
 const validatorConfig = {
   email: {
@@ -41,7 +42,8 @@ const RegisterForm = () => {
   const {professions, isLoading: professionIsLoading} = useProfessions()
   const professionsList = professions.map(p => ({label: p.name, value: p._id}))
 
-  const {qualities, isLoading: qualityIsLoading} = useQualities()
+  const qualities = useSelector(getQualities())
+  const qualityIsLoading = useSelector(getQualitiesLoadingStatus())
   const qualitiesList = qualities.map(q => ({label: q.name, value: q._id}))
 
   const {singUp} = useAuth()

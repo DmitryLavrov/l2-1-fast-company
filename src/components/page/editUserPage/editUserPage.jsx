@@ -10,7 +10,8 @@ import CheckboxField from '../../common/form/checkboxField'
 import { useHistory, useParams } from 'react-router-dom'
 import { useAuth } from '../../../hooks/useAuth'
 import { useProfessions } from '../../../hooks/useProfession'
-import { useQualities } from '../../../hooks/useQuality'
+import { useSelector } from 'react-redux'
+import { getQualities, getQualitiesLoadingStatus } from '../../../store/qualities'
 
 const validatorConfig = {
   name: {
@@ -44,7 +45,8 @@ const EditUserPage = () => {
   const {professions, isLoading: professionIsLoading} = useProfessions()
   const professionsList = professions.map(p => ({label: p.name, value: p._id}))
 
-  const {qualities, isLoading: qualityIsLoading, getQuality} = useQualities()
+  const qualities = useSelector(getQualities())
+  const qualityIsLoading = useSelector(getQualitiesLoadingStatus())
   const qualitiesList = qualities.map(q => ({label: q.name, value: q._id}))
 
   const history = useHistory()
@@ -79,8 +81,7 @@ const EditUserPage = () => {
   }
 
   const fillQualities = (qualitiesId) => {
-    const qualities = qualitiesId.map(q => (getQuality(q)))
-    return qualities.map(q => ({label: q.name, value: q._id}))
+    return qualitiesList.filter(q => (qualitiesId.includes(q.value)))
   }
 
   const handleChange = (field) => {

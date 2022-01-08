@@ -8,7 +8,6 @@ import Main from './layouts/main'
 import Login from './layouts/login'
 // import EditForm from './components/ui/editForm'
 import { ProfessionProvider } from './hooks/useProfession'
-import { QualityProvider } from './hooks/useQuality'
 import AuthProvider from './hooks/useAuth'
 import ProtectedRoute from './components/common/protectedRoute'
 import Logout from './layouts/logout'
@@ -27,7 +26,6 @@ const App = () => {
       <AuthProvider>
         <NavBar/>
         <ProfessionProvider>
-          <QualityProvider>
             <Switch>
               <Route path="/login/:type?"><Login/></Route>
               <Route path="/logout"><Logout/></Route>
@@ -36,7 +34,6 @@ const App = () => {
               <Route path="/" exact><Main/></Route>
               <Redirect to="/"/>
             </Switch>
-          </QualityProvider>
         </ProfessionProvider>
       </AuthProvider>
       <ToastContainer/>
