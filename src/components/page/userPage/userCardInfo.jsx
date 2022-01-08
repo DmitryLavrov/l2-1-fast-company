@@ -2,11 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
 import { useAuth } from '../../../hooks/useAuth'
-import { useProfessions } from '../../../hooks/useProfession'
+import { useSelector } from 'react-redux'
+
+import { getProfessionById, getProfessionsLoadingStatus } from '../../../store/professions'
 
 const UserCardInfo = ({user}) => {
   const {currentUser} = useAuth()
-  const {getProfession, isLoading: professionIsLoading} = useProfessions()
+  const professionIsLoading = useSelector(getProfessionsLoadingStatus())
+  const prof = useSelector(getProfessionById(user.profession))
   const history = useHistory()
 
   const handleButton = () => {
@@ -33,7 +36,7 @@ const UserCardInfo = ({user}) => {
               {user.name}
             </h4>
             <p className="text-secondary mb-1">
-              {!professionIsLoading && getProfession(user.profession)?.name}
+              {!professionIsLoading && prof?.name}
             </p>
             <div className="text-muted">
               <i className="bi bi-caret-down-fill text-primary" role="button"/>

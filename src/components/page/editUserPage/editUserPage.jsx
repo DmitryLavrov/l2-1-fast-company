@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { validator } from '../../../utils/validator'
 import TextField from '../../common/form/textField'
@@ -7,11 +9,9 @@ import SelectField from '../../common/form/selectField'
 import RadioField from '../../common/form/radioField'
 import MultiSelectField from '../../common/form/multiSelectField'
 import CheckboxField from '../../common/form/checkboxField'
-import { useHistory, useParams } from 'react-router-dom'
 import { useAuth } from '../../../hooks/useAuth'
-import { useProfessions } from '../../../hooks/useProfession'
-import { useSelector } from 'react-redux'
 import { getQualities, getQualitiesLoadingStatus } from '../../../store/qualities'
+import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
 
 const validatorConfig = {
   name: {
@@ -42,7 +42,8 @@ const EditUserPage = () => {
 
   const {currentUser, update} = useAuth()
 
-  const {professions, isLoading: professionIsLoading} = useProfessions()
+  const professions = useSelector(getProfessionsList())
+  const professionIsLoading = useSelector(getProfessionsLoadingStatus())
   const professionsList = professions.map(p => ({label: p.name, value: p._id}))
 
   const qualities = useSelector(getQualities())

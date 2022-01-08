@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
+import { useSelector } from 'react-redux'
 
 import Pagination from '../../common/pagination'
-import {paginate} from '../../../utils/paginate'
+import { paginate } from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
 import { useUser } from '../../../hooks/useUsers'
-import { useProfessions } from '../../../hooks/useProfession'
 import { useAuth } from '../../../hooks/useAuth'
+import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
 
 const UsersListPage = () => {
   const usersPerPage = 8
@@ -19,7 +20,8 @@ const UsersListPage = () => {
   const [search, setSearch] = useState('')
 
   const {users: allUsers} = useUser()
-  const {professions, isLoading: professionsLoading} = useProfessions()
+  const professions = useSelector(getProfessionsList())
+  const professionsLoading = useSelector(getProfessionsLoadingStatus())
   const {currentUser} = useAuth()
 
   useEffect(() => {
@@ -30,11 +32,11 @@ const UsersListPage = () => {
 
   const handleBookmark = (userId) => {
     const newArray = allUsers.map((user) => {
-        if (user._id === userId) {
-          return {...user, bookmark: !user.bookmark}
-        }
-        return user
-      })
+      if (user._id === userId) {
+        return {...user, bookmark: !user.bookmark}
+      }
+      return user
+    })
     // =========================
     console.log('newArray:', newArray)
     // =========================
