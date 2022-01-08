@@ -121,7 +121,9 @@ const AuthProvider = ({children}) => {
 
       localStorageService.setToken(data)
 
-      await updateUser(data.localId, {
+      await getUserData()
+
+      await updateUser(currentUser._id, {
         email,
         ...userData
       })

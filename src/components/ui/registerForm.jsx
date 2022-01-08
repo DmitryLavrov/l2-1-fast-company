@@ -94,7 +94,7 @@ const RegisterForm = () => {
     }
   }
 
-  if (!data) {
+  if (!data || professionIsLoading || qualityIsLoading) {
     return <h1>Loading...</h1>
   }
 

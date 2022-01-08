@@ -49,12 +49,12 @@ const EditUserPage = () => {
 
   const history = useHistory()
 
-  if (userId !== currentUser._id) {
+  if (userId && currentUser._id && userId !== currentUser._id) {
     history.push(`/users/${currentUser._id}/edit`)
   }
 
   useEffect(() => {
-    if (!professionIsLoading && !qualityIsLoading) {
+    if (!professionIsLoading && !qualityIsLoading && currentUser) {
       fillData(currentUser)
     }
   }, [professionIsLoading, qualityIsLoading])
