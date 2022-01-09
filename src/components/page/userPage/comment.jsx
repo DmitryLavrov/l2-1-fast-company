@@ -1,14 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {prepareDateForRender} from '../../../utils/prepareDateForRender'
-import { useUser } from '../../../hooks/useUsers'
+import { prepareDateForRender } from '../../../utils/prepareDateForRender'
 import { useAuth } from '../../../hooks/useAuth'
+import { useSelector } from 'react-redux'
+import { getUserById } from '../../../store/users'
 
 const Comment = ({comment, onDelete}) => {
-  const {getUserById} = useUser()
   const {currentUser} = useAuth()
 
-  const user = getUserById(comment.userId)
+  const user = useSelector(getUserById(comment.userId))
+
   const messageDate = prepareDateForRender(comment.createdAt, Date.now())
 
   return (
@@ -29,10 +30,10 @@ const Comment = ({comment, onDelete}) => {
                   </span>
                   </p>
                   {currentUser._id === user._id &&
-                    <button className="btn btn-sm text-primary d-flex align-items-center"
-                            onClick={() => onDelete(comment._id)}>
-                      <i className="bi bi-x-lg"/>
-                    </button>}
+                  <button className="btn btn-sm text-primary d-flex align-items-center"
+                          onClick={() => onDelete(comment._id)}>
+                    <i className="bi bi-x-lg"/>
+                  </button>}
                 </div>
                 <p className="small mb-0">
                   {comment.content}

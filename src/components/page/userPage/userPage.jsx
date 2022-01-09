@@ -4,13 +4,12 @@ import PropTypes from 'prop-types'
 import UserCard from './userCard'
 import CommentsList from './commentsList'
 import CommentForm from './commentForm'
-import { useUser } from '../../../hooks/useUsers'
 import { CommentsProvider } from '../../../hooks/useComments'
+import { useSelector } from 'react-redux'
+import { getUserById } from '../../../store/users'
 
 const UserPage = ({userId}) => {
-  const {getUserById} = useUser()
-
-  const user = getUserById(userId)
+  const user = useSelector(getUserById(userId))
 
   if (!user) return <h3>Loading....</h3>
 

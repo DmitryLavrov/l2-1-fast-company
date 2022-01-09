@@ -7,9 +7,9 @@ import { paginate } from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
-import { useUser } from '../../../hooks/useUsers'
 import { useAuth } from '../../../hooks/useAuth'
 import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
+import { getUsersList } from '../../../store/users'
 
 const UsersListPage = () => {
   const usersPerPage = 8
@@ -19,7 +19,7 @@ const UsersListPage = () => {
   const [sortBy, setSortBy] = useState({path: 'rate', order: 'acs'})
   const [search, setSearch] = useState('')
 
-  const {users: allUsers} = useUser()
+  const allUsers = useSelector(getUsersList())
   const professions = useSelector(getProfessionsList())
   const professionsLoading = useSelector(getProfessionsLoadingStatus())
   const {currentUser} = useAuth()

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import qualityService from '../services/quality.service'
+import userService from '../services/user.service'
 
 const initialState = {
   entities: null,
@@ -30,15 +30,21 @@ const {usersRequested, usersReceived, usersRequestFailed} = usersSlice.actions
 export const loadUsersList = () => async (dispatch) => {
     dispatch(usersRequested())
     try {
-      const {content} = await qualityService.get()
+      const {content} = await userService.get()
       dispatch(usersReceived(content))
     } catch (err) {
       dispatch(usersRequestFailed(err.message))
     }
 }
 
-// export const getUsers = () => state => state.users.entities
-// export const getUsersLoadingStatus = () => state => state.users.isLoading
+export const getUsersList = () => state => state.users.entities
+
+export const getUserById = (id) => state => {
+  if (state.users.entities) {
+    return state.users.entities.find(u => u._id === id)
+  }
+  return {}
+}
 
 const {reducer: usersReducer} = usersSlice
 
