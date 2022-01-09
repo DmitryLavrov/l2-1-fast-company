@@ -142,6 +142,10 @@ export const getDataStatus = () => state => state.users.dataLoaded
 
 export const getCurrentUserId = () => state => state.users.auth.userId
 
+export const getCurrentUserData = () => state => state.users.entities
+  ? state.users.entities.find(u => u._id === state.users.auth.userId)
+  : null
+
 export const getUsersLoadingStatus = () => state => state.users.isLoading
 
 const {reducer: usersReducer} = usersSlice

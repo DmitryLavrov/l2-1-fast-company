@@ -12,6 +12,7 @@ import CheckboxField from '../../common/form/checkboxField'
 import { useAuth } from '../../../hooks/useAuth'
 import { getQualities, getQualitiesLoadingStatus } from '../../../store/qualities'
 import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
+import { getCurrentUserData } from '../../../store/users'
 
 const validatorConfig = {
   name: {
@@ -40,7 +41,8 @@ const EditUserPage = () => {
   const [data, setData] = useState()
   const [errors, setErrors] = useState({})
 
-  const {currentUser, update} = useAuth()
+  const {update} = useAuth()
+  const currentUser = useSelector(getCurrentUserData())
 
   const professions = useSelector(getProfessionsList())
   const professionIsLoading = useSelector(getProfessionsLoadingStatus())

@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useHistory } from 'react-router-dom'
-import { useAuth } from '../../../hooks/useAuth'
 import { useSelector } from 'react-redux'
 
 import { getProfessionById, getProfessionsLoadingStatus } from '../../../store/professions'
+import { getCurrentUserId } from '../../../store/users'
 
 const UserCardInfo = ({user}) => {
-  const {currentUser} = useAuth()
+  const currentUserId = useSelector(getCurrentUserId())
   const professionIsLoading = useSelector(getProfessionsLoadingStatus())
   const prof = useSelector(getProfessionById(user.profession))
   const history = useHistory()
@@ -22,7 +22,7 @@ const UserCardInfo = ({user}) => {
 
         <div className="d-flex flex-column align-items-center text-center position-relative">
 
-          {user._id === currentUser._id &&
+          {user._id === currentUserId &&
           <a className="position-absolute top-0 end-0 btn btn-light btn-sm"
              onClick={handleButton}>
             <i className="bi bi-gear"/>
