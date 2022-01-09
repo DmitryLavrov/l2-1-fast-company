@@ -3,6 +3,7 @@ import userService from '../services/user.service'
 import authService from '../services/auth.service'
 import localStorageService from '../services/localStorage.service'
 import randomInt from '../utils/randomInt'
+import history from '../utils/history'
 
 const initialState = {
   entities: null,
@@ -84,6 +85,7 @@ function createUser(payload) {
     try {
       const {content} = await userService.create(payload)
       dispatch(userCreated(content))
+      history.push('/users')
     } catch (err) {
       dispatch(createUserFailed(err.message))
     }
