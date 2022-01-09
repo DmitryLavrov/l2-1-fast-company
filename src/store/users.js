@@ -79,6 +79,21 @@ export const signUp = ({email, password, ...rest}) => async dispatch => {
   }
 }
 
+export const login = ({payload, redirect}) => async dispatch => {
+  const {email, password} = payload
+  dispatch(authRequested())
+  try {
+    const data = await authService.login({email, password})
+    localStorageService.setToken(data)
+    dispatch(authRequestSuccess({
+      userId: data.localId
+    }))
+    history.push(redirect)
+  } catch (err) {
+    dispatch(authRequestFailed(err.message))
+  }
+}
+
 function createUser(payload) {
   return async dispatch => {
     dispatch(userCreateRequested())
