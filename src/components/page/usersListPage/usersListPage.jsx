@@ -7,9 +7,8 @@ import { paginate } from '../../../utils/paginate'
 import GroupList from '../../common/groupList'
 import SearchStatus from '../../ui/searchStatus'
 import UsersTable from '../../ui/usersTable'
-import { useAuth } from '../../../hooks/useAuth'
 import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
-import { getUsersList } from '../../../store/users'
+import { getCurrentUserId, getUsersList } from '../../../store/users'
 
 const UsersListPage = () => {
   const usersPerPage = 8
@@ -22,7 +21,7 @@ const UsersListPage = () => {
   const allUsers = useSelector(getUsersList())
   const professions = useSelector(getProfessionsList())
   const professionsLoading = useSelector(getProfessionsLoadingStatus())
-  const {currentUser} = useAuth()
+  const currentUserId = useSelector(getCurrentUserId())
 
   useEffect(() => {
     setCurrentPage(1)
@@ -66,7 +65,7 @@ const UsersListPage = () => {
   }
 
   const filterUsers = () => {
-    const users = allUsers.filter(user => user._id !== currentUser._id)
+    const users = allUsers.filter(user => user._id !== currentUserId)
 
     if (selectedProf) {
       return users.filter(user => user.profession === selectedProf._id)

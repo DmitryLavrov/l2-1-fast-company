@@ -10,7 +10,8 @@ const initialState = {
   isLoading: true,
   error: null,
   auth: null,
-  isLoggedIn: false
+  isLoggedIn: false,
+  dataLoaded: false
 }
 
 const usersSlice = createSlice({
@@ -23,6 +24,7 @@ const usersSlice = createSlice({
     usersReceived(state, action) {
       state.entities = action.payload
       state.isLoading = false
+      state.dataLoaded = true
     },
     usersRequestFailed(state, action) {
       state.error = action.payload
@@ -43,7 +45,7 @@ const usersSlice = createSlice({
 
 const {usersRequested, usersReceived, usersRequestFailed, authRequestSuccess, authRequestFailed, userCreated} = usersSlice.actions
 
-// for APP.JS
+// for APP.JS and USERS.JSX
 export const loadUsersList = () => async (dispatch) => {
   dispatch(usersRequested())
   try {
@@ -119,6 +121,10 @@ export const getUserById = (id) => state => {
 }
 
 export const getIsLoggedIn = () => state => state.users.isLoggedIn
+
+export const getDataStatus = () => state => state.users.dataLoaded
+
+export const getCurrentUserId = () => state => state.users.auth.userId
 
 const {reducer: usersReducer} = usersSlice
 
