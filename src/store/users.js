@@ -2,6 +2,7 @@ import { createSlice, createAction } from '@reduxjs/toolkit'
 import userService from '../services/user.service'
 import authService from '../services/auth.service'
 import localStorageService from '../services/localStorage.service'
+import randomInt from '../utils/randomInt'
 
 const initialState = {
   entities: null,
@@ -31,11 +32,14 @@ const usersSlice = createSlice({
     },
     authRequestFailed(state, action) {
       state.error = action.payload
+    },
+    userCreated(state, action) {
+      state.entities.push(action.payload)
     }
   }
 })
 
-const {usersRequested, usersReceived, usersRequestFailed, authRequestSuccess, authRequestFailed} = usersSlice.actions
+const {usersRequested, usersReceived, usersRequestFailed, authRequestSuccess, authRequestFailed, userCreated} = usersSlice.actions
 
 // for APP.JS
 export const loadUsersList = () => async (dispatch) => {
@@ -50,17 +54,39 @@ export const loadUsersList = () => async (dispatch) => {
 
 // AUTH
 const authRequested = createAction('users/authRequested')
+const userCreateRequested = createAction('users/userCreateRequested')
+const createUserFailed = createAction('users/createUserFailed')
 
 export const signUp = ({email, password, ...rest}) => async dispatch => {
   dispatch(authRequested())
   try {
-  const data = await authService.register({email, password})
+    const data = await authService.register({email, password})
     localStorageService.setToken(data)
     dispatch(authRequestSuccess({
       userId: data.localId
     }))
+    dispatch(createUser({
+      _id: data.localId,
+      email,
+      rate: randomInt(1, 5),
+      completedMeetings: randomInt(0, 200),
+      image: `https://avatars.dicebear.com/api/avataaars/${(Math.random() + 1).toString(36).substring(7)}.svg`,
+      ...rest
+    }))
   } catch (err) {
     dispatch(authRequestFailed(err.message))
+  }
+}
+
+function createUser(payload) {
+  return async dispatch => {
+    dispatch(userCreateRequested())
+    try {
+      const {content} = await userService.create(payload)
+      dispatch(userCreated(content))
+    } catch (err) {
+      dispatch(createUserFailed(err.message))
+    }
   }
 }
 
