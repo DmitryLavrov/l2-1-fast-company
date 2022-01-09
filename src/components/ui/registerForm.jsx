@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { validator } from '../../utils/validator'
 import TextField from '../common/form/textField'
@@ -8,9 +7,9 @@ import SelectField from '../common/form/selectField'
 import RadioField from '../common/form/radioField'
 import MultiSelectField from '../common/form/multiSelectField'
 import CheckboxField from '../common/form/checkboxField'
-import { useAuth } from '../../hooks/useAuth'
 import { getQualities, getQualitiesLoadingStatus } from '../../store/qualities'
 import { getProfessionsList, getProfessionsLoadingStatus } from '../../store/professions'
+import { signUp } from '../../store/users'
 
 const validatorConfig = {
   email: {
@@ -36,6 +35,7 @@ const validatorConfig = {
 }
 
 const RegisterForm = () => {
+  const dispatch = useDispatch()
   const [data, setData] = useState(null)
   const [errors, setErrors] = useState({})
 
@@ -47,10 +47,7 @@ const RegisterForm = () => {
   const qualityIsLoading = useSelector(getQualitiesLoadingStatus())
   const qualitiesList = qualities.map(q => ({label: q.name, value: q._id}))
 
-  const {singUp} = useAuth()
   const isValid = (Object.keys(errors).length === 0)
-
-  const history = useHistory()
 
   useEffect(() => {
     if (!professionIsLoading && !qualityIsLoading) {
@@ -83,18 +80,13 @@ const RegisterForm = () => {
     return Object.keys(errors).length === 0
   }
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault()
     const isValid = validate()
     if (!isValid) return
     const newData = {...data, qualities: data.qualities.map(q => q.value)}
 
-    try {
-      await singUp(newData)
-      history.push('/')
-    } catch (err) {
-      setErrors(err)
-    }
+    dispatch(signUp(newData))
   }
 
   if (!data || professionIsLoading || qualityIsLoading) {
