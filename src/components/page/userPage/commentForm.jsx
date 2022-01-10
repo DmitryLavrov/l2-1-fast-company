@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
-import { useComments } from '../../../hooks/useComments'
 import TextField from '../../common/form/textField'
 import { validator } from '../../../utils/validator'
+import { useDispatch, useSelector } from 'react-redux'
+import { createComment } from '../../../store/comments'
+import { getCurrentUserId } from '../../../store/users'
 
 const validatorConfig = {
   content: {
@@ -11,10 +13,11 @@ const validatorConfig = {
   }
 }
 
-const CommentForm = () => {
+const CommentForm = ({userId: pageId}) => {
+  const dispatch = useDispatch()
   const [data, setData] = useState({content: ''})
   const [errors, setErrors] = useState({})
-  const {createComment} = useComments()
+  const userId = useSelector(getCurrentUserId())
 
   useEffect(() => {
     validate()
@@ -38,7 +41,7 @@ const CommentForm = () => {
     const isValid = validate()
     if (!isValid) return
 
-    createComment(data)
+    dispatch(createComment({...data, pageId, userId}))
   }
 
   const isValid = (Object.keys(errors).length === 0)

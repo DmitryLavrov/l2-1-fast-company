@@ -21,7 +21,7 @@ const UserPage = ({userId}) => {
 
         <CommentsProvider>
           <div className="col-md-8">
-            <CommentForm/>
+            <CommentForm userId={userId}/>
 
             <CommentsList/>
           </div>
