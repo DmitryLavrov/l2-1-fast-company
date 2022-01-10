@@ -25,6 +25,16 @@ const authService = {
       refresh_token: localStorageService.getRefreshToken()
     })
     return data
+  },
+  updateAccounts: async (email, password) => {
+    const {data} = await httpAuth.post('accounts:update',
+      {
+        idToken: localStorageService.getAccessToken(),
+        email,
+        password,
+        returnSecureToken: true
+      })
+    return data
   }
 }
 

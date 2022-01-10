@@ -41,7 +41,7 @@ http.interceptors.request.use(
 )
 
 const transformData = (data) => {
-  return data && !data._id
+  return data && !data.email
     ? Object.keys(data).map(key => ({...data[key]}))
     : data
 }

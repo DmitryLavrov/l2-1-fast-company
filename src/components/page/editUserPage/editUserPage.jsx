@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { validator } from '../../../utils/validator'
@@ -9,10 +9,9 @@ import SelectField from '../../common/form/selectField'
 import RadioField from '../../common/form/radioField'
 import MultiSelectField from '../../common/form/multiSelectField'
 import CheckboxField from '../../common/form/checkboxField'
-import { useAuth } from '../../../hooks/useAuth'
 import { getQualities, getQualitiesLoadingStatus } from '../../../store/qualities'
 import { getProfessionsList, getProfessionsLoadingStatus } from '../../../store/professions'
-import { getCurrentUserData } from '../../../store/users'
+import { getCurrentUserData, updateUserData } from '../../../store/users'
 
 const validatorConfig = {
   name: {
@@ -37,11 +36,11 @@ const validatorConfig = {
 }
 
 const EditUserPage = () => {
+  const dispatch = useDispatch()
   const {userId} = useParams()
   const [data, setData] = useState()
   const [errors, setErrors] = useState({})
 
-  const {update} = useAuth()
   const currentUser = useSelector(getCurrentUserData())
 
   const professions = useSelector(getProfessionsList())
@@ -111,15 +110,7 @@ const EditUserPage = () => {
       qualities
     }
 
-    delete newData.email
-    delete newData.password
-
-    try {
-      await update(data.email, data.password, newData)
-      history.push(`/users/${userId}`)
-    } catch (err) {
-      setErrors(err)
-    }
+    dispatch(updateUserData(newData))
   }
 
   const goBack = () => {

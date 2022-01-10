@@ -16,9 +16,6 @@ const Qualities = ({qualities: qualitiesId}) => {
     return 'Loading...'
   }
 
-  // =========================
-  console.log('isLoading, qualities:', isLoading, qualities)
-  // =========================
   const userQualities = qualities ? qualitiesId.map(id => (qualities.find(q => (q._id === id)))) : []
 
   return (

@@ -47,6 +47,9 @@ const useMockData = () => {
   async function initialize() {
     try {
       for (const p of professions) {
+        // =========================
+        console.log('profession/ + p._id:', 'profession/' + p._id)
+        // =========================
         await httpService.put('profession/' + p._id, p)
         incrementCount()
       }

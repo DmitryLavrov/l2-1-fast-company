@@ -4,6 +4,7 @@ import authService from '../services/auth.service'
 import localStorageService from '../services/localStorage.service'
 import randomInt from '../utils/randomInt'
 import history from '../utils/history'
+import { toast } from 'react-toastify'
 
 const initialState = localStorageService.getAccessToken()
   ? {
@@ -38,6 +39,7 @@ const usersSlice = createSlice({
     usersRequestFailed(state, action) {
       state.error = action.payload
       state.isLoading = false
+      toast.info(state.error)
     },
     authRequestSuccess(state, action) {
       state.auth = action.payload
@@ -45,11 +47,16 @@ const usersSlice = createSlice({
     },
     authRequestFailed(state, action) {
       state.error = action.payload
+      toast.info(state.error)
     },
     userCreated(state, action) {
       state.entities.push(action.payload)
     },
-    userLoggedOut(state, action) {
+    userUpdated(state, action) {
+      const idx = state.entities.findIndex(i => i._id === localStorageService.getUserId())
+      state.entities[idx] = {...state.entities[idx], ...action.payload}
+    },
+    userLoggedOut(state) {
       state.entities = null
       state.auth = null
       state.isLoggedIn = false
@@ -65,6 +72,7 @@ const {
   authRequestSuccess,
   authRequestFailed,
   userCreated,
+  userUpdated,
   userLoggedOut
 } = usersSlice.actions
 
@@ -82,7 +90,9 @@ export const loadUsersList = () => async (dispatch) => {
 // AUTH
 const authRequested = createAction('users/authRequested')
 const userCreateRequested = createAction('users/userCreateRequested')
-const createUserFailed = createAction('users/createUserFailed')
+const userCreateFailed = createAction('users/userCreateFailed')
+const userUpdateRequested = createAction('users/userUpdateRequested')
+const userUpdateFailed = createAction('users/userUpdateFailed')
 
 export const signUp = ({email, password, ...rest}) => async dispatch => {
   dispatch(authRequested())
@@ -126,6 +136,24 @@ export const logout = () => async dispatch => {
   history.push('/')
 }
 
+export const updateUserData = (payload) => async dispatch => {
+  const {email, password} = payload
+  dispatch(authRequested())
+  try {
+    const data = await authService.updateAccounts(email, password)
+    localStorageService.setToken(data)
+    dispatch(authRequestSuccess({
+      userId: data.localId
+    }))
+
+    const newData = {...payload}
+    delete newData.password
+    dispatch(updateUser(data.localId, newData))
+  } catch (err) {
+    dispatch(authRequestFailed(err.message))
+  }
+}
+
 function createUser(payload) {
   return async dispatch => {
     dispatch(userCreateRequested())
@@ -134,7 +162,20 @@ function createUser(payload) {
       dispatch(userCreated(content))
       history.push('/users')
     } catch (err) {
-      dispatch(createUserFailed(err.message))
+      dispatch(userCreateFailed(err.message))
+    }
+  }
+}
+
+function updateUser(id, payload) {
+  return async dispatch => {
+    dispatch(userUpdateRequested())
+    try {
+      const {content} = await userService.update(id, payload)
+      dispatch(userUpdated(content))
+      history.push(`/users/${id}`)
+    } catch (err) {
+      dispatch(userUpdateFailed(err.message))
     }
   }
 }
