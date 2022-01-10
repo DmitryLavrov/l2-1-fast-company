@@ -3,8 +3,8 @@ import { validator } from '../../utils/validator'
 import TextField from '../common/form/textField'
 import CheckboxField from '../common/form/checkboxField'
 import { useHistory } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { login } from '../../store/users'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAuthError, login } from '../../store/users'
 
 const validatorConfig = {
   email: {
@@ -23,7 +23,7 @@ const LoginForm = () => {
   const dispatch = useDispatch()
   const [data, setData] = useState({email: '', password: '', stayOn: false})
   const [errors, setErrors] = useState({})
-  const [enterError, setEnterError] = useState(null)
+  const loginError = useSelector(getAuthError())
 
   const isValid = (Object.keys(errors).length === 0)
 
@@ -34,7 +34,6 @@ const LoginForm = () => {
       ...prev,
       [field.name]: field.value
     }))
-    setEnterError(null)
   }
 
   useEffect(() => {
@@ -75,13 +74,13 @@ const LoginForm = () => {
         Оставаться в системе
       </CheckboxField>
 
-      {enterError &&
+      {loginError &&
       <p className="text-danger">
-        {enterError}
+        {loginError}
       </p>}
 
       <button type="submit"
-              disabled={!isValid || enterError}
+              disabled={!isValid}
               className="btn btn-outline-primary w-100">
         Submit
       </button>

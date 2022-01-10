@@ -5,6 +5,7 @@ import localStorageService from '../services/localStorage.service'
 import randomInt from '../utils/randomInt'
 import history from '../utils/history'
 import { toast } from 'react-toastify'
+import generateAuthError from '../utils/generateAuthError'
 
 const initialState = localStorageService.getAccessToken()
   ? {
@@ -45,6 +46,9 @@ const usersSlice = createSlice({
       state.auth = action.payload
       state.isLoggedIn = true
     },
+    authRequested(state) {
+      state.error = null
+    },
     authRequestFailed(state, action) {
       state.error = action.payload
       toast.info(state.error)
@@ -69,6 +73,7 @@ const {
   usersRequested,
   usersReceived,
   usersRequestFailed,
+  authRequested,
   authRequestSuccess,
   authRequestFailed,
   userCreated,
@@ -88,7 +93,6 @@ export const loadUsersList = () => async (dispatch) => {
 }
 
 // AUTH
-const authRequested = createAction('users/authRequested')
 const userCreateRequested = createAction('users/userCreateRequested')
 const userCreateFailed = createAction('users/userCreateFailed')
 const userUpdateRequested = createAction('users/userUpdateRequested')
@@ -126,7 +130,13 @@ export const login = ({payload, redirect}) => async dispatch => {
     }))
     history.push(redirect)
   } catch (err) {
-    dispatch(authRequestFailed(err.message))
+    const {code, message} = err.response.data.error
+    if (code === 400) {
+      const errorMessage = generateAuthError(message)
+    dispatch(authRequestFailed(errorMessage))
+    } else {
+      dispatch(authRequestFailed(err.message))
+    }
   }
 }
 
@@ -201,6 +211,8 @@ export const getCurrentUserData = () => state => state.users.entities
   : null
 
 export const getUsersLoadingStatus = () => state => state.users.isLoading
+
+export const getAuthError = () => state => state.users.error
 
 const {reducer: usersReducer} = usersSlice
 
