@@ -10,7 +10,12 @@ const NavProfile = () => {
   const toggleMenu = () => setOpen((prev) => !prev)
 
   if (!currentUser) {
-    return <h3>Loading...</h3>
+    return (
+      <Link to="/logout"
+            className="nav-link">
+        Log out
+      </Link>
+    )
   }
 
   return (

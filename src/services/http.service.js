@@ -26,6 +26,8 @@ http.interceptors.request.use(
           expiresIn: data.expires_in,
           localId: data.user_id
         })
+      } else {
+        localStorageService.removeAuthData()
       }
 
       const accessToken = localStorageService.getAccessToken()
@@ -52,16 +54,17 @@ http.interceptors.response.use(res => {
     }
     return res
   },
-  error => {
-    const expectedError = error.response && error.response.status >= 400 && error.response.status < 500
+  err => {
+    const expectedError = err.response && err.response.status >= 400 && err.response.status < 500
     if (!expectedError) {
       // =========================
-      console.log('error:', error.message)
+      console.log('err.message:', err.message)
+      console.log('err.response.data.error:', err.response.data.error)
       // =========================
 
-      toast.info('Something happened. Try it later.')
+      toast.info('Unexpected error. Try it later.')
     }
-    return Promise.reject(error)
+    return Promise.reject(err)
   }
 )
 

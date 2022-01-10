@@ -1,10 +1,11 @@
 import { createSlice, createAction } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
+
 import userService from '../services/user.service'
 import authService from '../services/auth.service'
 import localStorageService from '../services/localStorage.service'
 import randomInt from '../utils/randomInt'
 import history from '../utils/history'
-import { toast } from 'react-toastify'
 import generateAuthError from '../utils/generateAuthError'
 
 const initialState = localStorageService.getAccessToken()
@@ -56,9 +57,17 @@ const usersSlice = createSlice({
     userCreated(state, action) {
       state.entities.push(action.payload)
     },
+    userCreateFailed(state, action) {
+      state.error = action.payload
+      toast.info(state.error)
+    },
     userUpdated(state, action) {
       const idx = state.entities.findIndex(i => i._id === localStorageService.getUserId())
       state.entities[idx] = {...state.entities[idx], ...action.payload}
+    },
+    userUpdateFailed(state, action) {
+      state.error = action.payload
+      toast.info(state.error)
     },
     userLoggedOut(state) {
       state.entities = null
@@ -77,7 +86,9 @@ const {
   authRequestSuccess,
   authRequestFailed,
   userCreated,
+  userCreateFailed,
   userUpdated,
+  userUpdateFailed,
   userLoggedOut
 } = usersSlice.actions
 
@@ -88,15 +99,13 @@ export const loadUsersList = () => async (dispatch) => {
     const {content} = await userService.get()
     dispatch(usersReceived(content))
   } catch (err) {
-    dispatch(usersRequestFailed(err.message))
+    dispatch(usersRequestFailed(err.response?.data?.error || err.message))
   }
 }
 
 // AUTH
 const userCreateRequested = createAction('users/userCreateRequested')
-const userCreateFailed = createAction('users/userCreateFailed')
 const userUpdateRequested = createAction('users/userUpdateRequested')
-const userUpdateFailed = createAction('users/userUpdateFailed')
 
 export const signUp = ({email, password, ...rest}) => async dispatch => {
   dispatch(authRequested())
@@ -115,7 +124,7 @@ export const signUp = ({email, password, ...rest}) => async dispatch => {
       ...rest
     }))
   } catch (err) {
-    dispatch(authRequestFailed(err.message))
+    dispatch(authRequestFailed(err.response?.data?.error || err.message))
   }
 }
 
@@ -135,7 +144,7 @@ export const login = ({payload, redirect}) => async dispatch => {
       const errorMessage = generateAuthError(message)
     dispatch(authRequestFailed(errorMessage))
     } else {
-      dispatch(authRequestFailed(err.message))
+      dispatch(authRequestFailed(err.response?.data?.error || err.message))
     }
   }
 }
@@ -160,7 +169,7 @@ export const updateUserData = (payload) => async dispatch => {
     delete newData.password
     dispatch(updateUser(data.localId, newData))
   } catch (err) {
-    dispatch(authRequestFailed(err.message))
+    dispatch(authRequestFailed(err.response?.data?.error || err.message))
   }
 }
 
@@ -172,7 +181,7 @@ function createUser(payload) {
       dispatch(userCreated(content))
       history.push('/users')
     } catch (err) {
-      dispatch(userCreateFailed(err.message))
+      dispatch(userCreateFailed(err.response?.data?.error || err.message))
     }
   }
 }
@@ -185,7 +194,7 @@ function updateUser(id, payload) {
       dispatch(userUpdated(content))
       history.push(`/users/${id}`)
     } catch (err) {
-      dispatch(userUpdateFailed(err.message))
+      dispatch(userUpdateFailed(err.response?.data?.error || err.message))
     }
   }
 }
@@ -215,5 +224,4 @@ export const getUsersLoadingStatus = () => state => state.users.isLoading
 export const getAuthError = () => state => state.users.error
 
 const {reducer: usersReducer} = usersSlice
-
 export default usersReducer

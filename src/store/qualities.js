@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
+
 import qualityService from '../services/quality.service'
 import isOutdated from '../utils/isOutdated'
 
@@ -24,6 +26,7 @@ const qualitiesSlice = createSlice({
     qualitiesRequestFailed(state, action) {
       state.error = action.payload
       state.isLoading = false
+      toast.info(state.error)
     }
   }
 })
@@ -37,7 +40,7 @@ export const loadQualitiesList = () => async (dispatch, state) => {
       const {content} = await qualityService.get()
       dispatch(qualitiesReceived(content))
     } catch (err) {
-      dispatch(qualitiesRequestFailed(err.message))
+      dispatch(qualitiesRequestFailed(err.response?.data?.error || err.message))
     }
   }
 }

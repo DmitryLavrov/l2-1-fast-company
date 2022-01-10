@@ -47,7 +47,7 @@ export const loadCommentsList = (userId) => async (dispatch) => {
       const {content} = await commentService.getComments(userId)
       dispatch(commentsReceived(content))
     } catch (err) {
-      dispatch(commentsRequestFailed(err.message))
+      dispatch(commentsRequestFailed(err.response?.data?.error || err.message))
     }
 }
 
@@ -64,7 +64,7 @@ export const createComment = (data) => async (dispatch) => {
     const {content} = await commentService.createComment(comment)
     dispatch(commentCreated(content))
   } catch (err) {
-    dispatch(commentCreateFailed(err.message))
+    dispatch(commentCreateFailed(err.response?.data?.error || err.message))
   }
 }
 

@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
+
 import professionService from '../services/profession.service'
 import isOutdated from '../utils/isOutdated'
 
@@ -24,6 +26,7 @@ const professionsSlice = createSlice({
     professionsRequestFailed(state, action) {
       state.error = action.payload
       state.isLoading = false
+      toast.info(state.error)
     }
   }
 })
@@ -37,7 +40,7 @@ export const loadProfessionsList = () => async (dispatch, state) => {
       const {content} = await professionService.get()
       dispatch(professionsReceived(content))
     } catch (err) {
-      dispatch(professionsRequestFailed(err.message))
+      dispatch(professionsRequestFailed(err.response?.data?.error || err.message))
     }
   }
 }

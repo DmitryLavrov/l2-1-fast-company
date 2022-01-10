@@ -2,6 +2,7 @@ import professions from '../mockData/professions.json'
 import qualities from '../mockData/qualities.json'
 import users from '../mockData/users.json'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import httpService from '../services/http.service'
 
 const useMockData = () => {
@@ -16,6 +17,12 @@ const useMockData = () => {
   const [status, setStatus] = useState(statusConsts.idle)
   const [progress, setProgress] = useState(0)
   const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (error) {
+      toast.info(error)
+    }
+  }, [error])
 
   const summaryCount = professions.length + qualities.length + users.length
 
@@ -47,9 +54,6 @@ const useMockData = () => {
   async function initialize() {
     try {
       for (const p of professions) {
-        // =========================
-        console.log('profession/ + p._id:', 'profession/' + p._id)
-        // =========================
         await httpService.put('profession/' + p._id, p)
         incrementCount()
       }
@@ -61,10 +65,11 @@ const useMockData = () => {
 
       for (const u of users) {
         await httpService.put('user/' + u._id, u)
+        // await userService.create(u)
         incrementCount()
       }
     } catch (err) {
-      setError(err)
+      setError(err.response?.data?.error || err.message)
       setStatus(statusConsts.error)
     }
   }

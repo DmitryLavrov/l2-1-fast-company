@@ -34,8 +34,7 @@ const NavBar = () => {
         {isLoggedIn
           ? <NavProfile/>
           : <NavLink to="/login"
-                     className="nav-link"
-                     activeStyle={{fontWeight: 'bold'}}>
+                     className="nav-link">
             Login
           </NavLink>
         }
