@@ -3,14 +3,12 @@ import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Comment from './comment'
-import { useComments } from '../../../hooks/useComments'
-import { getComments, getCommentsLoadingStatus, loadCommentsList } from '../../../store/comments'
+import { deleteComment, getComments, getCommentsLoadingStatus, loadCommentsList } from '../../../store/comments'
 import { useParams } from 'react-router-dom'
 import { orderBy } from 'lodash'
 
 const CommentsList = () => {
   const dispatch = useDispatch()
-  const {deleteComment} = useComments()
   const isLoading = useSelector(getCommentsLoadingStatus())
   const comments = useSelector(getComments())
 
@@ -21,7 +19,7 @@ const CommentsList = () => {
   }, [userId])
 
   const handleDelete = (id) => {
-    deleteComment(id)
+    dispatch(deleteComment(id))
   }
 
   const sortedComments = orderBy(comments, ['createdAt'], ['desc'])

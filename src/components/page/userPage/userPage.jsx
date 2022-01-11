@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import UserCard from './userCard'
 import CommentsList from './commentsList'
 import CommentForm from './commentForm'
-import { CommentsProvider } from '../../../hooks/useComments'
 import { useSelector } from 'react-redux'
 import { getUserById } from '../../../store/users'
 
@@ -16,17 +15,13 @@ const UserPage = ({userId}) => {
   return (
     <div className="container">
       <div className="row gutters-sm">
-
         <UserCard user={user}/>
 
-        <CommentsProvider>
-          <div className="col-md-8">
-            <CommentForm userId={userId}/>
+        <div className="col-md-8">
+          <CommentForm userId={userId}/>
 
-            <CommentsList/>
-          </div>
-        </CommentsProvider>
-
+          <CommentsList/>
+        </div>
       </div>
     </div>
   )

@@ -32,23 +32,41 @@ const commentsSlice = createSlice({
     commentCreateFailed(state, action) {
       state.error = action.payload
       toast.info(state.error)
+    },
+    commentDeleted(state, action) {
+      if (action.payload.content === null) {
+        state.entities = state.entities.filter(c => (c._id !== action.payload.id))
+      }
+    },
+    commentDeleteFailed(state, action) {
+      state.error = action.payload
+      toast.info(state.error)
     }
   }
 })
 
-const {commentsRequested, commentsReceived, commentsRequestFailed, commentCreated, commentCreateFailed} = commentsSlice.actions
+const {
+  commentsRequested,
+  commentsReceived,
+  commentsRequestFailed,
+  commentCreated,
+  commentCreateFailed,
+  commentDeleted,
+  commentDeleteFailed
+} = commentsSlice.actions
 
 const commentCreateRequested = createAction('comments/commentCreateRequested')
+const commentDeleteRequested = createAction('comments/commentDeleteRequested')
 
 // FOR CommentsList.jsx
 export const loadCommentsList = (userId) => async (dispatch) => {
-    dispatch(commentsRequested())
-    try {
-      const {content} = await commentService.getComments(userId)
-      dispatch(commentsReceived(content))
-    } catch (err) {
-      dispatch(commentsRequestFailed(err.response?.data?.error || err.message))
-    }
+  dispatch(commentsRequested())
+  try {
+    const {content} = await commentService.getComments(userId)
+    dispatch(commentsReceived(content))
+  } catch (err) {
+    dispatch(commentsRequestFailed(err.response?.data?.error || err.message))
+  }
 }
 
 // COMMENTS ACTIONS
@@ -65,6 +83,16 @@ export const createComment = (data) => async (dispatch) => {
     dispatch(commentCreated(content))
   } catch (err) {
     dispatch(commentCreateFailed(err.response?.data?.error || err.message))
+  }
+}
+
+export const deleteComment = (id) => async (dispatch) => {
+  dispatch(commentDeleteRequested())
+  try {
+    const {content} = await commentService.deleteComment(id)
+    dispatch(commentDeleted({id, content}))
+  } catch (err) {
+    dispatch(commentDeleteFailed(err.response?.data?.error || err.message))
   }
 }
 
