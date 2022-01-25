@@ -33,6 +33,7 @@ const AuthProvider = ({children}) => {
   }
 
   useEffect(() => {
+    // if (localStorageService.getAccessToken()) {
     if (localStorageService.getUserId()) {
       getUserData()
     }
